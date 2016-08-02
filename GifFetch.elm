@@ -13,13 +13,16 @@ main =
 
 -- MODEL
 
+type FetchStatus = Empty | Fetching | FetchError | Fetched
+
 type alias Model =
   { topic : String
   , gifUrl : String
+  , fetchStatus : FetchStatus
   }
 
 init : (Model, Cmd Msg)
-init = (Model "cats" "", Cmd.none)
+init = (Model "cats" "" Empty, Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.none
@@ -36,11 +39,11 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Fetch ->
-      (model, fetchGif model.topic)
+      ({ model | fetchStatus = Fetching }, fetchGif model.topic)
     Response resp ->
-      ({ model | gifUrl = resp }, Cmd.none)
+      ({ model | gifUrl = resp, fetchStatus = Fetched }, Cmd.none)
     Error err ->
-      (model, Cmd.none)
+      ({ model | fetchStatus = FetchError }, Cmd.none)
 
 decode : Json.Decoder String
 decode =
@@ -56,6 +59,10 @@ fetchGif topic =
 view : Model -> Html Msg
 view model =
   div [] [
-    img [src model.gifUrl] [],
-    button [onClick Fetch] [text "Click for a new gif"]
+    case model.fetchStatus of
+      Empty -> div [] [text "Please click the button"]
+      Fetching -> div [] [text "Fetching..."]
+      Fetched -> img [src model.gifUrl] []
+      FetchError -> div [] [text "Error"]
+    , button [onClick Fetch] [text "Click for a new gif"]
   ]
