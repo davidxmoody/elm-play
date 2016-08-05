@@ -9,12 +9,19 @@ import Html.Events exposing (onClick)
 -- MODEL
 
 
-type alias Model = Int
+type alias Model =
+  { count : Int
+  , max : Int
+  , min : Int
+  }
 
 
 init : Int -> Model
 init count =
-  count
+  { count = count
+  , max = count
+  , min = count
+  }
 
 
 
@@ -30,10 +37,10 @@ update : Msg -> Model -> Model
 update msg model =
   case msg of
     Increment ->
-      model + 1
+      { model | count = model.count + 1, max = Basics.max model.max (model.count + 1) }
 
     Decrement ->
-      model - 1
+      { model | count = model.count - 1, min = Basics.min model.min (model.count - 1) }
 
 
 
@@ -52,9 +59,9 @@ view model =
 countStyle : Attribute msg
 countStyle =
   style
-    [ ("font-size", "20px")
+    [ ("font-size", "18px")
     , ("font-family", "monospace")
     , ("display", "inline-block")
-    , ("width", "50px")
+    , ("width", "500px")
     , ("text-align", "center")
     ]

@@ -23,6 +23,7 @@ init = (Model (Counter.init 0) (Counter.init 0), Cmd.none)
 
 type Msg
   = Reset
+  | Swap
   | Top Counter.Msg
   | Bottom Counter.Msg
 
@@ -31,6 +32,8 @@ update msg model =
   case msg of
     Reset ->
       (Model (Counter.init 0) (Counter.init 0), Cmd.none)
+    Swap ->
+      (Model model.bottom model.top, Cmd.none)
     Top msg ->
       (Model (Counter.update msg model.top) model.bottom, Cmd.none)
     Bottom msg ->
@@ -52,5 +55,8 @@ view model =
     ],
     div [] [
       button [onClick Reset] [text "Reset"]
+    ],
+    div [] [
+      button [onClick Swap] [text "Swap"]
     ]
   ]
