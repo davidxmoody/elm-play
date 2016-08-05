@@ -1,25 +1,30 @@
-import Html exposing (Html, button, div, text, Attribute)
-import Html.App as Html
+module Counter exposing (Model, Msg, init, update, view)
+
+import Html exposing (..)
+import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Html.Attributes exposing (attribute, style)
 
-
-main =
-  Html.beginnerProgram { model = model, view = view, update = update }
 
 
 -- MODEL
 
+
 type alias Model = Int
 
-model : Model
-model =
-  0
+
+init : Int -> Model
+init count =
+  count
+
 
 
 -- UPDATE
 
-type Msg = Increment | Decrement | Reset
+
+type Msg
+  = Increment
+  | Decrement
+
 
 update : Msg -> Model -> Model
 update msg model =
@@ -30,20 +35,26 @@ update msg model =
     Decrement ->
       model - 1
 
-    Reset ->
-      0
 
 
 -- VIEW
 
-buttonStyle : Model -> Attribute Msg
-buttonStyle model = style [ ("color", if model == 0 then "red" else "black") ]
 
 view : Model -> Html Msg
 view model =
   div []
     [ button [ onClick Decrement ] [ text "-" ]
-    , div [ buttonStyle model ] [ text (toString model) ]
+    , div [ countStyle ] [ text (toString model) ]
     , button [ onClick Increment ] [ text "+" ]
-    , button [ attribute "class" "foobar", onClick Reset ] [ text "Reset" ]
+    ]
+
+
+countStyle : Attribute msg
+countStyle =
+  style
+    [ ("font-size", "20px")
+    , ("font-family", "monospace")
+    , ("display", "inline-block")
+    , ("width", "50px")
+    , ("text-align", "center")
     ]
